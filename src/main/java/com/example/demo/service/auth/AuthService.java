@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.demo.dto.model.auth.LoginRequest;
 import com.example.demo.dto.model.auth.RegisterRequest;
+import com.example.demo.dto.model.auth.UpdateUserRequest;
 import com.example.demo.repository.auth.LoginRepository;
 import com.example.demo.repository.auth.UserRepository;
 import com.example.demo.repository.util.UserValidationUtil;
@@ -16,7 +17,8 @@ public class AuthService {
     private final UserValidationUtil userValidationUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(LoginRepository loginRepository, UserRepository userRepository, UserValidationUtil userValidationUtil) {
+    public AuthService(LoginRepository loginRepository, UserRepository userRepository,
+            UserValidationUtil userValidationUtil) {
         this.loginRepository = loginRepository;
         this.userRepository = userRepository;
         this.userValidationUtil = userValidationUtil;
@@ -34,13 +36,17 @@ public class AuthService {
     }
 
     public boolean registrarUsuario(RegisterRequest request) {
-        if (userValidationUtil.usernameExists(request.getUsername()) || 
-            userValidationUtil.emailExists(request.getEmail())) {
+        if (userValidationUtil.usernameExists(request.getUsername()) ||
+                userValidationUtil.emailExists(request.getEmail())) {
             return false;
         }
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         int rows = userRepository.registerUser(request);
         return rows > 0;
     }
-}
 
+    public boolean actualizarUsuario(String username, UpdateUserRequest request) {
+        int rows = userRepository.updateUser(username, request);
+        return rows > 0;
+    }
+}

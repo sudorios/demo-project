@@ -1,6 +1,8 @@
 package com.example.demo.repository.auth;
 
 import com.example.demo.dto.model.auth.RegisterRequest;
+import com.example.demo.dto.model.auth.UpdateUserRequest;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -35,5 +37,28 @@ public class UserRepository {
                 request.getPosition(),
                 now,
                 now);
+    }
+    
+    public int updateUser(String username, UpdateUserRequest request) {
+        String sql = "UPDATE \"user\" SET " +
+                "first_name = ?, " +
+                "last_name = ?, " +
+                "company_name = ?, " +
+                "phone = ?, " +
+                "\"position\" = ?, " +
+                "updated_at = ? " +
+                "WHERE username = ?";
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        return jdbcTemplate.update(sql,
+                request.getFirstName(),
+                request.getLastName(),
+                request.getCompanyName(),
+                request.getPhone(),
+                request.getPosition(),
+                now,
+                username
+        );
     }
 }

@@ -4,6 +4,7 @@ import com.example.demo.dto.model.auth.LoginRequest;
 import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
 import com.example.demo.dto.model.auth.RegisterResponse;
+import com.example.demo.dto.model.auth.UpdateUserRequest;
 import com.example.demo.service.auth.AuthService;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class AuthController {
             return new LoginResponse(false, "❌ Credenciales inválidas");
         }
     }
+
     @PostMapping("/register")
     public RegisterResponse register(@RequestBody RegisterRequest registerRequest) {
         boolean registrado = authService.registrarUsuario(registerRequest);
@@ -33,6 +35,19 @@ public class AuthController {
             return new RegisterResponse(true, "✅ Usuario registrado correctamente: " + registerRequest.getUsername());
         } else {
             return new RegisterResponse(false, "❌ El username o email ya existe");
+        }
+    }
+
+    @PutMapping("/update/{username}")
+    public RegisterResponse updateUser(
+            @PathVariable String username,
+            @RequestBody UpdateUserRequest updateRequest) {
+
+        boolean actualizado = authService.actualizarUsuario(username, updateRequest);
+        if (actualizado) {
+            return new RegisterResponse(true, "✅ Usuario actualizado correctamente");
+        } else {
+            return new RegisterResponse(false, "❌ Usuario no encontrado o no se pudo actualizar");
         }
     }
 }
