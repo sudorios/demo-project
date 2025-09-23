@@ -38,7 +38,7 @@ public class UserRepository {
                 now,
                 now);
     }
-    
+
     public int updateUser(String username, UpdateUserRequest request) {
         String sql = "UPDATE \"user\" SET " +
                 "first_name = ?, " +
@@ -58,7 +58,14 @@ public class UserRepository {
                 request.getPhone(),
                 request.getPosition(),
                 now,
-                username
-        );
+                username);
     }
+
+    public int updateProfileImage(String username, String profileImageUrl) {
+        String sql = "UPDATE \"user\" SET profile_image_url = ?, updated_at = ? WHERE username = ?";
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        return jdbcTemplate.update(sql, profileImageUrl, now, username);
+    }
+
 }

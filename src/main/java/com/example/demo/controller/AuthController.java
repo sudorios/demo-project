@@ -4,6 +4,7 @@ import com.example.demo.dto.model.auth.LoginRequest;
 import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
 import com.example.demo.dto.model.auth.RegisterResponse;
+import com.example.demo.dto.model.auth.UpdateProfileImageRequest;
 import com.example.demo.dto.model.auth.UpdateUserRequest;
 import com.example.demo.service.auth.AuthService;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        boolean valido = authService.validarUsuario(loginRequest);
-        if (valido) {
-            return new LoginResponse(true, "✅ Login correcto para usuario: " + loginRequest.getUsername());
-        } else {
-            return new LoginResponse(false, "❌ Credenciales inválidas");
-        }
+        return authService.login(loginRequest);
     }
 
     @PostMapping("/register")
@@ -50,4 +46,17 @@ public class AuthController {
             return new RegisterResponse(false, "❌ Usuario no encontrado o no se pudo actualizar");
         }
     }
+
+    @PatchMapping("/update-profile-image/{username}")
+    public RegisterResponse updateProfileImage(
+            @PathVariable String username,
+            @RequestBody UpdateProfileImageRequest request) {
+        boolean actualizado = authService.actualizarImagen(username, request.getProfileImageUrl());
+        if (actualizado) {
+            return new RegisterResponse(true, "✅ Imagen de perfil actualizada correctamente");
+        } else {
+            return new RegisterResponse(false, "❌ Usuario no encontrado o no se pudo actualizar la imagen");
+        }
+    }
+
 }
