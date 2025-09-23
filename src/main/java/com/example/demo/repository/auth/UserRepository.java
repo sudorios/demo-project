@@ -19,8 +19,7 @@ public class UserRepository {
 
     public int registerUser(RegisterRequest request) {
         String sql = "INSERT INTO \"user\" " +
-                "(username, email, password_hash, first_name, last_name, company_name, phone, \"position\", created_at, updated_at) "
-                +
+                "(username, email, password_hash, first_name, last_name, company_name, phone, \"position\", created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         String hashedPassword = request.getPassword();
@@ -39,7 +38,7 @@ public class UserRepository {
                 now);
     }
 
-    public int updateUser(String username, UpdateUserRequest request) {
+    public int updateUser(Long userId, UpdateUserRequest request) {
         String sql = "UPDATE \"user\" SET " +
                 "first_name = ?, " +
                 "last_name = ?, " +
@@ -47,7 +46,7 @@ public class UserRepository {
                 "phone = ?, " +
                 "\"position\" = ?, " +
                 "updated_at = ? " +
-                "WHERE username = ?";
+                "WHERE id = ?";
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
@@ -58,14 +57,13 @@ public class UserRepository {
                 request.getPhone(),
                 request.getPosition(),
                 now,
-                username);
+                userId);
     }
 
-    public int updateProfileImage(String username, String profileImageUrl) {
-        String sql = "UPDATE \"user\" SET profile_image_url = ?, updated_at = ? WHERE username = ?";
+    public int updateProfileImage(Long userId, String profileImageUrl) {
+        String sql = "UPDATE \"user\" SET profile_image_url = ?, updated_at = ? WHERE id = ?";
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        return jdbcTemplate.update(sql, profileImageUrl, now, username);
+        return jdbcTemplate.update(sql, profileImageUrl, now, userId);
     }
-
 }

@@ -1,8 +1,9 @@
 package com.example.demo.service.auth;
 
-import com.example.demo.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.config.security.JwtUtil;
 import com.example.demo.dto.model.auth.LoginRequest;
 import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
@@ -15,14 +16,13 @@ import com.example.demo.repository.util.UserValidationUtil;
 public class AuthService {
 
     private final JwtUtil jwtUtil;
-
     private final LoginRepository loginRepository;
     private final UserRepository userRepository;
     private final UserValidationUtil userValidationUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthService(LoginRepository loginRepository, UserRepository userRepository,
-            UserValidationUtil userValidationUtil, JwtUtil jwtUtil) {
+                       UserValidationUtil userValidationUtil, JwtUtil jwtUtil) {
         this.loginRepository = loginRepository;
         this.userRepository = userRepository;
         this.userValidationUtil = userValidationUtil;
@@ -39,8 +39,8 @@ public class AuthService {
                     if (valid) {
                         Long userId = loginRepository.findUserIdByUsername(loginRequest.getUsername())
                                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-                        String token = jwtUtil.generateToken(userId, 1000 * 60 * 60);
-                        return new LoginResponse(true, "Login correcto", token);
+                        String token = jwtUtil.generateToken(userId, 1000 * 60 * 60); // 1 hora
+                        return new LoginResponse(true, "✅ Login correcto", token);
                     }
                     return new LoginResponse(false, "❌ Credenciales inválidas", null);
                 })
@@ -57,14 +57,13 @@ public class AuthService {
         return rows > 0;
     }
 
-    public boolean actualizarUsuario(String username, UpdateUserRequest request) {
-        int rows = userRepository.updateUser(username, request);
+    public boolean actualizarUsuario(Long userId, UpdateUserRequest request) {
+        int rows = userRepository.updateUser(userId, request);
         return rows > 0;
     }
 
-    public boolean actualizarImagen(String username, String profileImageUrl) {
-        int rows = userRepository.updateProfileImage(username, profileImageUrl);
+    public boolean actualizarImagen(Long userId, String profileImageUrl) {
+        int rows = userRepository.updateProfileImage(userId, profileImageUrl);
         return rows > 0;
     }
-
 }
