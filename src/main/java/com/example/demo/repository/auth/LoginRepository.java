@@ -19,4 +19,11 @@ public class LoginRepository {
                 (rs, rowNum) -> rs.getString("password_hash"),
                 username).stream().findFirst();
     }
+
+    public Optional<Long> findUserIdByUsername(String username) {
+        String sql = "SELECT id FROM \"user\" WHERE username = ?";
+        return jdbcTemplate.query(sql,
+                (rs, rowNum) -> rs.getLong("id"),
+                username).stream().findFirst();
+    }
 }

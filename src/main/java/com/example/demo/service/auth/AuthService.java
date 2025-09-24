@@ -2,51 +2,58 @@ package com.example.demo.service.auth;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.config.security.JwtUtil;
 import com.example.demo.dto.model.auth.LoginRequest;
+import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
-import com.example.demo.dto.model.auth.UpdateUserRequest;
 import com.example.demo.repository.auth.LoginRepository;
-import com.example.demo.repository.auth.UserRepository;
-import com.example.demo.repository.util.UserValidationUtil;
+import com.example.demo.repository.auth.RegisterRepository;
+import com.example.demo.repository.util.UserUtil;
 
 @Service
 public class AuthService {
 
+    private final JwtUtil jwtUtil;
     private final LoginRepository loginRepository;
-    private final UserRepository userRepository;
-    private final UserValidationUtil userValidationUtil;
+    private final RegisterRepository registerRepository;
+    private final UserUtil userUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(LoginRepository loginRepository, UserRepository userRepository,
-            UserValidationUtil userValidationUtil) {
+    public AuthService(LoginRepository loginRepository, RegisterRepository registerRepository,
+            UserUtil userUtil, JwtUtil jwtUtil) {
         this.loginRepository = loginRepository;
-        this.userRepository = userRepository;
-        this.userValidationUtil = userValidationUtil;
+        this.registerRepository = registerRepository;
+        this.userUtil = userUtil;
+        this.jwtUtil = jwtUtil;
     }
 
-    public boolean validarUsuario(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
         return loginRepository.findPasswordByUsername(loginRequest.getUsername())
                 .map(storedPassword -> {
-                    if (storedPassword.startsWith("$2a$")) {
-                        return passwordEncoder.matches(loginRequest.getPassword(), storedPassword);
+                    boolean valid = storedPassword.startsWith("$2a$")
+                            ? passwordEncoder.matches(loginRequest.getPassword(), storedPassword)
+                            : storedPassword.equals(loginRequest.getPassword());
+
+                    if (valid) {
+                        Long userId = loginRepository.findUserIdByUsername(loginRequest.getUsername())
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                        String token = jwtUtil.generateToken(userId, 1000 * 60 * 60); // 1 hora
+                        return new LoginResponse(true, "✅ Login correcto", token);
                     }
-                    return storedPassword.equals(loginRequest.getPassword());
+                    return new LoginResponse(false, "❌ Credenciales inválidas", null);
                 })
-                .orElse(false);
+                .orElse(new LoginResponse(false, "❌ Credenciales inválidas", null));
     }
 
     public boolean registrarUsuario(RegisterRequest request) {
-        if (userValidationUtil.usernameExists(request.getUsername()) ||
-                userValidationUtil.emailExists(request.getEmail())) {
+        if (userUtil.usernameExists(request.getUsername()) ||
+                userUtil.emailExists(request.getEmail())) {
             return false;
         }
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        int rows = userRepository.registerUser(request);
+        int rows = registerRepository.registerUser(request);
         return rows > 0;
     }
 
-    public boolean actualizarUsuario(String username, UpdateUserRequest request) {
-        int rows = userRepository.updateUser(username, request);
-        return rows > 0;
-    }
 }

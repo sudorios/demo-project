@@ -1,4 +1,4 @@
-package com.example.demo.dto.model.auth;
+package com.example.demo.dto.model.user;
 
 import lombok.Getter;
 import lombok.Setter;
