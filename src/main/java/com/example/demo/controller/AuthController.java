@@ -5,11 +5,7 @@ import com.example.demo.dto.model.auth.LoginRequest;
 import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
 import com.example.demo.dto.model.auth.RegisterResponse;
-import com.example.demo.dto.model.auth.UpdateProfileImageRequest;
-import com.example.demo.dto.model.auth.UpdateUserRequest;
 import com.example.demo.service.auth.AuthService;
-
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,28 +30,6 @@ public class AuthController {
             return new RegisterResponse(true, "✅ Usuario registrado correctamente: " + registerRequest.getUsername());
         } else {
             return new RegisterResponse(false, "❌ El username o email ya existe");
-        }
-    }
-
-    @PutMapping("/update")
-    public RegisterResponse updateUser(@RequestBody UpdateUserRequest updateRequest) {
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean actualizado = authService.actualizarUsuario(userId, updateRequest);
-        if (actualizado) {
-            return new RegisterResponse(true, "✅ Usuario actualizado correctamente");
-        } else {
-            return new RegisterResponse(false, "❌ Usuario no encontrado o no se pudo actualizar");
-        }
-    }
-
-    @PatchMapping("/update-profile-image")
-    public RegisterResponse updateProfileImage(@RequestBody UpdateProfileImageRequest request) {
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean actualizado = authService.actualizarImagen(userId, request.getProfileImageUrl());
-        if (actualizado) {
-            return new RegisterResponse(true, "✅ Imagen de perfil actualizada correctamente");
-        } else {
-            return new RegisterResponse(false, "❌ Usuario no encontrado o no se pudo actualizar la imagen");
         }
     }
 }

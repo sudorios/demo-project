@@ -7,25 +7,24 @@ import com.example.demo.config.security.JwtUtil;
 import com.example.demo.dto.model.auth.LoginRequest;
 import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
-import com.example.demo.dto.model.auth.UpdateUserRequest;
 import com.example.demo.repository.auth.LoginRepository;
-import com.example.demo.repository.auth.UserRepository;
-import com.example.demo.repository.util.UserValidationUtil;
+import com.example.demo.repository.auth.RegisterRepository;
+import com.example.demo.repository.util.UserUtil;
 
 @Service
 public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final LoginRepository loginRepository;
-    private final UserRepository userRepository;
-    private final UserValidationUtil userValidationUtil;
+    private final RegisterRepository registerRepository;
+    private final UserUtil userUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(LoginRepository loginRepository, UserRepository userRepository,
-                       UserValidationUtil userValidationUtil, JwtUtil jwtUtil) {
+    public AuthService(LoginRepository loginRepository, RegisterRepository registerRepository,
+            UserUtil userUtil, JwtUtil jwtUtil) {
         this.loginRepository = loginRepository;
-        this.userRepository = userRepository;
-        this.userValidationUtil = userValidationUtil;
+        this.registerRepository = registerRepository;
+        this.userUtil = userUtil;
         this.jwtUtil = jwtUtil;
     }
 
@@ -48,22 +47,13 @@ public class AuthService {
     }
 
     public boolean registrarUsuario(RegisterRequest request) {
-        if (userValidationUtil.usernameExists(request.getUsername()) ||
-                userValidationUtil.emailExists(request.getEmail())) {
+        if (userUtil.usernameExists(request.getUsername()) ||
+                userUtil.emailExists(request.getEmail())) {
             return false;
         }
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        int rows = userRepository.registerUser(request);
+        int rows = registerRepository.registerUser(request);
         return rows > 0;
     }
 
-    public boolean actualizarUsuario(Long userId, UpdateUserRequest request) {
-        int rows = userRepository.updateUser(userId, request);
-        return rows > 0;
-    }
-
-    public boolean actualizarImagen(Long userId, String profileImageUrl) {
-        int rows = userRepository.updateProfileImage(userId, profileImageUrl);
-        return rows > 0;
-    }
 }

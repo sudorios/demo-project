@@ -4,11 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserValidationUtil {
+public class UserUtil {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserValidationUtil(JdbcTemplate jdbcTemplate) {
+    public UserUtil(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -21,4 +21,13 @@ public class UserValidationUtil {
         String sql = "SELECT 1 FROM \"user\" WHERE email = ?";
         return !jdbcTemplate.queryForList(sql, email).isEmpty();
     }
+    
+    public String extractFirstWord(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.split(" ")[0];
+    }
+
+
 }
