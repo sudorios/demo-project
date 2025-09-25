@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.model.project.ProjectRequest;
 import com.example.demo.dto.model.project.ProjectResponse;
-import com.example.demo.repository.Project.CreateProjectRepository;
-import com.example.demo.repository.Project.SearchProjectRepository;
+import com.example.demo.repository.project.CreateProjectRepository;
+import com.example.demo.repository.project.SearchProjectRepository;
 
 @Service
 public class ProjectService {
