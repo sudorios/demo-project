@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,9 +33,8 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ProjectResponse createProject(
-            @Valid @RequestBody ProjectRequest request,
-            @RequestParam Long userId) {
+    public ProjectResponse createProject(@Valid @RequestBody ProjectRequest request) {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return projectService.createProject(request, userId);
     }
 
@@ -51,8 +51,9 @@ public class ProjectController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "true") boolean asc) {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<ProjectResponse> filteredProjects = projectService.searchProjects(
-                projectCode, name, statusId, categoryId, icon, startDate, endDate);
+                userId, projectCode, name, statusId, categoryId, icon, startDate, endDate);
         return projectUtil.paginateAndSort(filteredProjects, page, size, sortBy, asc);
     }
 
@@ -60,6 +61,9 @@ public class ProjectController {
     public SharedProjectResponse shareProject(
             @PathVariable Long projectId,
             @Valid @RequestBody SharedProjectRequest request) {
-        return shareProjectService.shareProject(projectId, request);
+
+        Long loggedUserId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return shareProjectService.shareProject(loggedUserId, projectId, request);
     }
 }

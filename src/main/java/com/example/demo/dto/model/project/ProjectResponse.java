@@ -16,4 +16,5 @@ public class ProjectResponse {
     private Long categoryId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Long userId;
 }

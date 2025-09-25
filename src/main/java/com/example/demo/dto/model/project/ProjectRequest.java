@@ -26,9 +26,6 @@ public class ProjectRequest {
     @NotNull(message = "La categoría es obligatoria")
     private Long categoryId;
 
-    @NotBlank(message = "La fecha de inicio es obligatoria")
     private LocalDate startDate;
-
-    @NotBlank(message = "La fecha de fin es obligatoria")
     private LocalDate endDate;
 }

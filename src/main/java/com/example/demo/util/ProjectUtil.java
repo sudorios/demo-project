@@ -7,15 +7,24 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.model.project.ProjectResponse;
 
 @Component
 public class ProjectUtil {
-    
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public ProjectUtil(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+
     @Autowired
     private ProjectComparator projectComparator;
+    
 
     public String generateProjectCode() {
         String uuid = UUID.randomUUID().toString()
@@ -31,21 +40,26 @@ public class ProjectUtil {
             int size,
             String sortBy,
             boolean ascending) {
-        
+
         if (projects == null || projects.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         if (page < 0 || size <= 0) {
             throw new IllegalArgumentException("Invalid pagination parameters");
         }
-        
+
         Comparator<ProjectResponse> comparator = projectComparator.getComparator(sortBy, ascending);
-        
+
         return projects.stream()
                 .sorted(comparator)
                 .skip((long) page * size)
                 .limit(size)
                 .collect(Collectors.toList());
+    }
+
+    public Long getProjectOwner(Long projectId) {
+        String sql = "SELECT user_id FROM projects WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, Long.class, projectId);
     }
 }

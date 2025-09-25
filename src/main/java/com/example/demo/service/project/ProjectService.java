@@ -26,23 +26,27 @@ public class ProjectService {
         return createProjectRepository.createProject(request, userId);
     }
 
-    public List<ProjectResponse> searchProjects(
-            String projectCode,
-            String name,
-            Long statusId,
-            Long categoryId,
-            String icon,
-            LocalDate startDate,
-            LocalDate endDate) {
-        ProjectResponse filters = ProjectResponse.builder()
-                .projectCode(projectCode)
-                .name(name)
-                .statusId(statusId)
-                .categoryId(categoryId)
-                .icon(icon)
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
-        return searchProjectRepository.searchProjects(filters);
-    }
+   public List<ProjectResponse> searchProjects(
+        Long userId,          
+        String projectCode,
+        String name,
+        Long statusId,
+        Long categoryId,
+        String icon,
+        LocalDate startDate,
+        LocalDate endDate) {
+
+    ProjectResponse filters = ProjectResponse.builder()
+            .userId(userId)    
+            .projectCode(projectCode)
+            .name(name)
+            .statusId(statusId)
+            .categoryId(categoryId)
+            .icon(icon)
+            .startDate(startDate)
+            .endDate(endDate)
+            .build();
+
+    return searchProjectRepository.searchProjects(filters);
+}
 }
