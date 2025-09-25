@@ -1,7 +1,7 @@
 package com.example.demo.repository.user;
 
 import com.example.demo.dto.model.user.UserProfileResponse;
-import com.example.demo.repository.util.UserUtil;
+import com.example.demo.util.UserUtil;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

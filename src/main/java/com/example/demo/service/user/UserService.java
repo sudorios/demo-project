@@ -1,10 +1,13 @@
 package com.example.demo.service.user;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.model.user.UpdateUserRequest;
 import com.example.demo.dto.model.user.UserProfileResponse;
 import com.example.demo.repository.user.UpdateUserRepository;
+import com.example.demo.repository.notification.NotificationRepository;
 import com.example.demo.repository.user.FindUserRepository;
 
 @Service
@@ -12,10 +15,12 @@ public class UserService {
 
     private final UpdateUserRepository updateUserRepository;
     private final FindUserRepository findUserRepository;
+    private final NotificationRepository notificationRepository;
 
-    public UserService(UpdateUserRepository updateUserRepository, FindUserRepository findUserRepository) {
+    public UserService(UpdateUserRepository updateUserRepository, FindUserRepository findUserRepository, NotificationRepository notificationRepository) {
         this.updateUserRepository = updateUserRepository;
         this.findUserRepository = findUserRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public boolean actualizarUsuario(Long userId, UpdateUserRequest request) {
@@ -28,7 +33,11 @@ public class UserService {
         return rows > 0;
     }
 
-    public UserProfileResponse getUserProfile(Long userId) {
-        return findUserRepository.findUserProfile(userId);
+    public UserProfileResponse getUserProfile(Long id) {
+        UserProfileResponse userProfile = findUserRepository.findUserProfile(id);
+        List<Long> notificationIds = notificationRepository.findNotification(id);
+        userProfile.setNotificationIds(notificationIds);
+        return userProfile;
     }
+        
 }

@@ -3,7 +3,14 @@ package com.example.demo.controller;
 import com.example.demo.dto.model.project.ProjectRequest;
 import com.example.demo.dto.model.project.ProjectResponse;
 import com.example.demo.service.project.ProjectService;
+import com.example.demo.util.ProjectUtil;
+
 import jakarta.validation.Valid;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,15 +18,35 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ProjectUtil projectUtil;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, ProjectUtil projectUtil) {
         this.projectService = projectService;
+        this.projectUtil = projectUtil;
     }
-    
+
     @PostMapping
     public ProjectResponse createProject(
             @Valid @RequestBody ProjectRequest request,
             @RequestParam Long userId) {
         return projectService.createProject(request, userId);
+    }
+
+    @GetMapping("/search")
+    public List<ProjectResponse> searchProjects(
+            @RequestParam(required = false) String projectCode,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long statusId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String icon,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "true") boolean asc) {
+        List<ProjectResponse> filteredProjects = projectService.searchProjects(
+                projectCode, name, statusId, categoryId, icon, startDate, endDate);
+        return projectUtil.paginateAndSort(filteredProjects, page, size, sortBy, asc);
     }
 }

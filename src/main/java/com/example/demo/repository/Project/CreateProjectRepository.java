@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.dto.model.project.ProjectRequest;
 import com.example.demo.dto.model.project.ProjectResponse;
-import com.example.demo.repository.util.ProjectUtil;
+import com.example.demo.util.ProjectUtil;
 
 @Repository
 public class CreateProjectRepository {

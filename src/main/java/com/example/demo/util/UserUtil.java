@@ -1,4 +1,4 @@
-package com.example.demo.repository.util;
+package com.example.demo.util;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;

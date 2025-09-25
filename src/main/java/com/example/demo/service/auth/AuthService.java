@@ -9,7 +9,7 @@ import com.example.demo.dto.model.auth.LoginResponse;
 import com.example.demo.dto.model.auth.RegisterRequest;
 import com.example.demo.repository.auth.LoginRepository;
 import com.example.demo.repository.auth.RegisterRepository;
-import com.example.demo.repository.util.UserUtil;
+import com.example.demo.util.UserUtil;
 
 @Service
 public class AuthService {
