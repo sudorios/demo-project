@@ -1,5 +1,7 @@
 package com.example.demo.dto.model.user;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +16,5 @@ public class UserProfileResponse {
     private String lastName;
     private String position;
     private String profileImageUrl;
+    private List<Long> notificationIds;
 }
