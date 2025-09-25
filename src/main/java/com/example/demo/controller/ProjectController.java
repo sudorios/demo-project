@@ -8,6 +8,7 @@ import com.example.demo.service.project.ProjectService;
 import com.example.demo.service.project.ShareProjectService;
 import com.example.demo.util.ProjectUtil;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/projects")
+@SecurityRequirement(name = "BearerAuth")
 public class ProjectController {
 
     private final ProjectService projectService;

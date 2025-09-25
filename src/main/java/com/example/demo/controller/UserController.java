@@ -5,12 +5,16 @@ import com.example.demo.dto.model.user.UpdateProfileImageRequest;
 import com.example.demo.dto.model.user.UpdateUserRequest;
 import com.example.demo.dto.model.user.UserProfileResponse;
 import com.example.demo.service.user.UserService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+@SecurityRequirement(name = "BearerAuth")
 public class UserController {
 
     private final UserService userService;

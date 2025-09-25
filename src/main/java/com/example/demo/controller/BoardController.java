@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.model.board.BoardResponse;
 import com.example.demo.service.board.BoardService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/api/board")
+@SecurityRequirement(name = "BearerAuth")
 public class BoardController {
 
     private final BoardService boardService;
