@@ -4,7 +4,7 @@
 ![Diagrama ER](src/main/java/com/example/demo/img/ERD.png)
 
 ## 💾 Script del Proyecto
-![Script](src/main/java/com/example/demo/database/project-script.png)
+![Script](src/main/java/com/example/demo/database/project-script.sql)
 
 ## 🛠️ Errores / Mejoras pendientes
 
